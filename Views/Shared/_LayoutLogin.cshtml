@@ -1,0 +1,43 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - DevWebsCourseProjectApp</title>
+    <link rel="stylesheet" href="~/css/site.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="~/semantic/semantic.css">
+</head>
+
+<body>
+    <!-- Side Bar -->
+    <div class="ui visible left inverted vertical sidebar menu">
+        <a class="item"><i class="home icon"></i>Home Page</a>
+    </div>
+
+
+    <!-- Fixed Nav Bar -->
+    <div class="ui top fixed menu">
+        <a class="item" asp-controller="LoggedIn" asp-action="Logout">Logout</a>
+    </div>
+
+    <!-- Content from chstml pages -->
+    <div class="pusher">
+        @RenderBody()
+    </div>
+    <footer class="border-top footer text-muted">
+        <div class="container">
+            &copy; 2020 - DevWebsCourseProjectApp - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+        </div>
+    </footer>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js"
+            integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
+            crossorigin="anonymous"></script>
+    <script src="~/semantic/semantic.min.js"></script>
+    @RenderSection("Scripts", required: false)
+</body>
+</html>
