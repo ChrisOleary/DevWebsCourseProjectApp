@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.SqlServer;
+using DevWebsCourseProjectApp.Models;
 
 namespace DevWebsCourseProjectApp
 {
@@ -22,8 +23,9 @@ namespace DevWebsCourseProjectApp
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
-            services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration
-                ["ConnectionStrings:DefaultConnection"]));
+
+            // ef to create the tables base on ProfileContext.cs
+            services.AddDbContext<ProfileContext>(options => options.UseSqlServer(Configuration["ConnectionStrings:DefaultConnection"])); // db connection in appsettings.json
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

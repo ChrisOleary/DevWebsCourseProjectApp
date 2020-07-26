@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using DevWebsCourseProjectApp.Models;
 using DevWebsCourseProjectApp.ViewModels;
+using System.Threading.Tasks;
 
 namespace DevWebsCourseProjectApp.Controllers
 {
@@ -13,7 +14,6 @@ namespace DevWebsCourseProjectApp.Controllers
         public HomeController(ILogger<HomeController> logger)
         {
             _logger = logger;
-
         }
 
         public IActionResult Index()
@@ -21,8 +21,10 @@ namespace DevWebsCourseProjectApp.Controllers
             return View();
         }
 
-        // form validation
-        public IActionResult Authenticate(LoginViewModel model)
+        // LOGIN VALIDATION
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Authenticate(LoginViewModel model)
         {
             if (ModelState.IsValid)// if vallidation passes
             {
@@ -33,6 +35,52 @@ namespace DevWebsCourseProjectApp.Controllers
                 return RedirectToAction("Index", "Home"); // else return to login page
             }
         }
+
+        // REGISTER
+        public IActionResult Register()
+        {
+            return View();
+        }
+
+        // REGISTER
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Register(RegisterViewModel model)
+        {
+            return View();
+        }
+
+        // RESET PASSWORD
+        public IActionResult ResetPassword()
+        {
+            return View();
+        }
+
+        // RESET PASSWORD
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ResetPassword(RegisterViewModel model)
+        {
+            return View();
+        }
+
+        // FORGOTTEN PASSWORD
+        public IActionResult ForgotPassword()
+        {
+            return View();
+        }
+
+        // FORGOTTEN PASSWORD
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ForgotPassword(ForgotPasswordViewModel model)
+        {
+            return View();
+        }
+
+
+
+
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
