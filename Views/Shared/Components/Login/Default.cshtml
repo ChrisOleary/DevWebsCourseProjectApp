@@ -6,7 +6,7 @@
 
 <div class="ui raised very padded text container" style="margin-right:50%; margin-top:5%;">
     <h1 class="ui header centered">APP LOGIN FORM</h1>
-    <form asp-controller="Home" asp-action="Authenticate" method="post" class="ui large form validate-me" role="form">
+    <form asp-controller="Home" asp-action="Index" method="post" class="ui large form validate-me" role="form">
 
         <div class="ui stack segment">
             <div class="field">
@@ -23,11 +23,14 @@
                     <span asp-validation-for="Password" style="color:red;"></span>
                 </div>
             </div>
-            <div>
+            <div class="inline">
                 <button class="ui blue button">
                     <i class="lock icon"></i>
                     Login
                 </button>
+                <div class="item" style="margin-top:1%;">
+                    <a class="ui red button" href="/Home/Register">Sign Up</a>
+                </div>
             </div>
             <div asp-validation-summary="All" class="ui error" style="color:red;"></div>
         </div>

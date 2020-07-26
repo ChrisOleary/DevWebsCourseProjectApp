@@ -18,7 +18,7 @@
 
     <!-- Fixed Nav Bar -->
     <div class="ui top fixed menu">
-        <a class="item" asp-controller="LoggedIn" asp-action="Logout">Logout</a>
+        @await Html.PartialAsync("_LoginPartial") 
     </div>
 
     <!-- Content from chstml pages -->

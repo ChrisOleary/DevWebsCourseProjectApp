@@ -7,6 +7,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.SqlServer;
 using DevWebsCourseProjectApp.Models;
+using Microsoft.AspNetCore.Identity;
 
 namespace DevWebsCourseProjectApp
 {
@@ -27,6 +28,11 @@ namespace DevWebsCourseProjectApp
 
             // ef to create the tables base on ProfileContext.cs
             services.AddDbContext<ProfileContext>(options => options.UseSqlServer(Configuration["ConnectionStrings:DefaultConnection"])); // db connection in appsettings.json
+
+            // for login stuff
+            services.AddIdentity<ApplicationUser, IdentityRole>()
+                .AddEntityFrameworkStores<ProfileContext>()
+                .AddDefaultTokenProviders();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -48,6 +54,9 @@ namespace DevWebsCourseProjectApp
             app.UseRouting();
 
             app.UseAuthorization();
+
+            // for login stuff
+            app.UseAuthentication();
 
             app.UseEndpoints(endpoints =>
             {
