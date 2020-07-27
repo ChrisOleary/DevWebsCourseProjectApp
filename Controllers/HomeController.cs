@@ -5,6 +5,7 @@ using DevWebsCourseProjectApp.Models;
 using DevWebsCourseProjectApp.ViewModels;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
+using DevWebsCourseProjectApp.Services;
 
 namespace DevWebsCourseProjectApp.Controllers
 {
@@ -13,12 +14,14 @@ namespace DevWebsCourseProjectApp.Controllers
         private readonly ILogger<HomeController> _logger;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly IEmailSend _emailSend;
 
-        public HomeController(ILogger<HomeController> logger, UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager)
+        public HomeController(ILogger<HomeController> logger, UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, IEmailSend emailSend)
         {
             _logger = logger;
             _userManager = userManager;
             _signInManager = signInManager;
+            _emailSend = emailSend;
         }
 
         public IActionResult Index()
@@ -93,9 +96,29 @@ namespace DevWebsCourseProjectApp.Controllers
         // RESET PASSWORD
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ResetPassword(RegisterViewModel model)
+        public async Task<IActionResult> ResetPassword(ResetPasswordViewModel model)
         {
-            return View();
+            if (ModelState.IsValid)
+            {
+                // find users account
+                var user = await _userManager.FindByEmailAsync(model.Email);
+                // if there is no account
+                if (user == null)
+                {
+                    // redirect to login
+                    return RedirectToAction("Index", "Home");
+                }
+                // if there is an account, reset password
+                var code = "token";
+                var result = await _userManager.ResetPasswordAsync(user, code, model.Password);
+                // log in user and direct to login page
+                if (result.Succeeded)
+                {
+                    await _signInManager.SignInAsync(user, isPersistent: false);
+                    return RedirectToAction("Index", "LoggedIn");
+                }
+            }
+            return View(model);
         }
 
         // FORGOTTEN PASSWORD
@@ -109,6 +132,23 @@ namespace DevWebsCourseProjectApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ForgotPassword(ForgotPasswordViewModel model)
         {
+            if (ModelState.IsValid)
+            {
+                // find users account
+                var user = await _userManager.FindByEmailAsync(model.Email);
+                // if there is no account or the forgotten password email is NOT confirmed
+                if (user == null || !(await _userManager.IsEmailConfirmedAsync(user))) 
+                {
+                    return View("ForgotPasswordConfirmation");
+                }
+                // send email confirmation
+
+            }            
+           return View(model);
+        }
+
+        public IActionResult ForgotPasswordConfirmation()
+        {
             return View();
         }
 
@@ -121,6 +161,15 @@ namespace DevWebsCourseProjectApp.Controllers
             return RedirectToAction("Index", "Home");
         }
 
+
+
+
+        public async Task<IActionResult> TestEmail()
+        {
+            await _emailSend.SendEmailAsync("chris_oleary@hotmail.co.uk", "Test Email", "Some Test Text");
+            
+            return View();
+        }
 
 
 

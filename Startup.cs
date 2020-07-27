@@ -1,13 +1,12 @@
-using DevWebsCourseProjectApp.Entities;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.SqlServer;
 using DevWebsCourseProjectApp.Models;
 using Microsoft.AspNetCore.Identity;
+using DevWebsCourseProjectApp.Services;
 
 namespace DevWebsCourseProjectApp
 {
@@ -16,7 +15,7 @@ namespace DevWebsCourseProjectApp
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
-
+           
         }
 
         public IConfiguration Configuration { get; }
@@ -26,6 +25,7 @@ namespace DevWebsCourseProjectApp
         {
             services.AddControllersWithViews();
 
+
             // ef to create the tables base on ProfileContext.cs
             services.AddDbContext<ProfileContext>(options => options.UseSqlServer(Configuration["ConnectionStrings:DefaultConnection"])); // db connection in appsettings.json
 
@@ -33,6 +33,10 @@ namespace DevWebsCourseProjectApp
             services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<ProfileContext>()
                 .AddDefaultTokenProviders();
+
+            // for SendGrid email registration
+            services.AddTransient<IEmailSend, EmailSend>();
+            services.Configure<MessageSenderOptions>(Configuration);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -57,6 +61,8 @@ namespace DevWebsCourseProjectApp
 
             // for login stuff
             app.UseAuthentication();
+
+            
 
             app.UseEndpoints(endpoints =>
             {
