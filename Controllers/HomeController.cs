@@ -6,6 +6,7 @@ using DevWebsCourseProjectApp.ViewModels;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using DevWebsCourseProjectApp.Services;
+using EllipticCurve;
 
 namespace DevWebsCourseProjectApp.Controllers
 {
@@ -56,7 +57,7 @@ namespace DevWebsCourseProjectApp.Controllers
             return View();
         }
 
-        // REGISTER
+        // REGISTER NEW USER
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Register(RegisterViewModel model)
@@ -72,10 +73,23 @@ namespace DevWebsCourseProjectApp.Controllers
                 var identityResults = await _userManager.CreateAsync(identityUser, model.Password);
                 if (identityResults.Succeeded)
                 {
+                    // auto generate email confirmation to send to user
+                    // create token
+                    var code = await _userManager.GenerateEmailConfirmationTokenAsync(identityUser);
+                    // create a url to be sent in email for user to click and confirm account
+                    var callbackUrl = Url.Action("ConfirmEmail", "Home", new { userid = identityUser.Id, Code = code },
+                        protocol: HttpContext.Request.Scheme);
+                    await _emailSend.SendEmailAsync(model.Username
+                        , "Confirm Account"
+                        , $"Confirm your account by " +
+                          $"clicking this Link:' {callbackUrl} ' "
+                          );
+
                     // log user in
                     await _signInManager.SignInAsync(identityUser, isPersistent: false); // isPersistent:false = cookies NOT persistent after browser close
-                    // take to login page
-                    return RedirectToAction("Index", "LoggedIn");
+
+                    // redirect to login page
+                    return View(model);
                 }
                 else
                 {
@@ -85,6 +99,22 @@ namespace DevWebsCourseProjectApp.Controllers
             }
 
             return View();
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ConfirmEmail(string userId, string code)
+        {
+            if (userId == null || code == null)
+            {
+                return View("Error");
+            }
+            var user = await _userManager.FindByIdAsync(userId);
+            if (userId == null)
+            {
+                return View("Error");
+            }
+            var result = await _userManager.ConfirmEmailAsync(user, code);
+            return View("ConfirmEmail");
         }
 
         // RESET PASSWORD
@@ -109,11 +139,11 @@ namespace DevWebsCourseProjectApp.Controllers
                     return RedirectToAction("Index", "Home");
                 }
                 // if there is an account, reset password
-                var code = "token";
-                var result = await _userManager.ResetPasswordAsync(user, code, model.Password);
-                // log in user and direct to login page
+                var result = await _userManager.ResetPasswordAsync(user, model.Code, model.Password);
+
                 if (result.Succeeded)
                 {
+                    // log in user and direct to login page
                     await _signInManager.SignInAsync(user, isPersistent: false);
                     return RedirectToAction("Index", "LoggedIn");
                 }
@@ -141,9 +171,15 @@ namespace DevWebsCourseProjectApp.Controllers
                 {
                     return View("ForgotPasswordConfirmation");
                 }
-                // send email confirmation
-
-            }            
+                // create reset token
+                var code = await _userManager.GeneratePasswordResetTokenAsync(user);
+                // create a url to be sent in email for user to reset password
+                var callbackUrl = Url.Action("ResetPassword", "Home", new { userid = user.Id, code = code },
+                    protocol: HttpContext.Request.Scheme);
+                await _emailSend.SendEmailAsync(model.Email
+                    , "Reset Password"
+                    , $"Reset your password by : <a href='{callbackUrl}'>CLICKING THIS LINK</a>");
+            }
            return View(model);
         }
 
@@ -166,7 +202,7 @@ namespace DevWebsCourseProjectApp.Controllers
 
         public async Task<IActionResult> TestEmail()
         {
-            await _emailSend.SendEmailAsync("chris_oleary@hotmail.co.uk", "Test Email", "Some Test Text");
+            await _emailSend.SendEmailAsync("chris_oleary@hotmail.co.uk", "See me in my office NOW", "Do you realise youre not wearing pants??");
             
             return View();
         }

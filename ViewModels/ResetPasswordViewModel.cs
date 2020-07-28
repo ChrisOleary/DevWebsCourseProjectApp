@@ -17,5 +17,7 @@ namespace DevWebsCourseProjectApp.ViewModels
         [DataType(DataType.Password)]
         [Compare("Password", ErrorMessage = "Passwords must match!")]
         public string ConfirmPassword { get; set; }
+
+        public string Code { get; set; }
     }
 }
