@@ -121,6 +121,7 @@ namespace DevWebsCourseProjectApp.Controllers
         public IActionResult ResetPassword()
         {
             return View();
+
         }
 
         // RESET PASSWORD
