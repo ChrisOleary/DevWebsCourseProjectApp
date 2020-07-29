@@ -6,7 +6,6 @@ using DevWebsCourseProjectApp.ViewModels;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using DevWebsCourseProjectApp.Services;
-using EllipticCurve;
 
 namespace DevWebsCourseProjectApp.Controllers
 {
@@ -16,13 +15,19 @@ namespace DevWebsCourseProjectApp.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IEmailSend _emailSend;
+        private readonly ISmsSend _smsSend;
 
-        public HomeController(ILogger<HomeController> logger, UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, IEmailSend emailSend)
+        public HomeController(ILogger<HomeController> logger
+            , UserManager<ApplicationUser> userManager
+            , SignInManager<ApplicationUser> signInManager
+            , IEmailSend emailSend
+            , ISmsSend smsSend)
         {
             _logger = logger;
             _userManager = userManager;
             _signInManager = signInManager;
             _emailSend = emailSend;
+            _smsSend = smsSend;
         }
 
         public IActionResult Index()
@@ -195,6 +200,15 @@ namespace DevWebsCourseProjectApp.Controllers
         public async Task<IActionResult> LogOff()
         {
             await _signInManager.SignOutAsync();
+            return RedirectToAction("Index", "Home");
+        }
+
+        // SMS SEND
+        // todo - this doesnt work
+        [HttpGet]
+        public async Task<IActionResult> SmsTest()
+        {
+            await _smsSend.SendSmsAsync("15005550009", "Test SMS message");
             return RedirectToAction("Index", "Home");
         }
 

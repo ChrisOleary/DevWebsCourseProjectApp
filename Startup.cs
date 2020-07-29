@@ -29,14 +29,19 @@ namespace DevWebsCourseProjectApp
             // ef to create the tables base on ProfileContext.cs
             services.AddDbContext<ProfileContext>(options => options.UseSqlServer(Configuration["ConnectionStrings:DefaultConnection"])); // db connection in appsettings.json
 
-            // for login stuff
+            // register identity login config
             services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<ProfileContext>()
                 .AddDefaultTokenProviders();
 
-            // for SendGrid email registration
-            services.AddTransient<IEmailSend, EmailSend>();
+            // register sendgrid
+            services.AddTransient<IEmailSend, MessageSend>();
+
+            // register api keys for user secrets
             services.Configure<MessageSenderOptions>(Configuration);
+
+            // register twillio
+            services.AddTransient<ISmsSend, MessageSend>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
