@@ -25,7 +25,6 @@ namespace DevWebsCourseProjectApp
         {
             services.AddControllersWithViews();
 
-
             // ef to create the tables base on ProfileContext.cs
             services.AddDbContext<ProfileContext>(options => options.UseSqlServer(Configuration["ConnectionStrings:DefaultConnection"])); // db connection in appsettings.json
 
@@ -42,6 +41,14 @@ namespace DevWebsCourseProjectApp
 
             // register twillio
             services.AddTransient<ISmsSend, MessageSend>();
+
+
+            // facebook external logins
+            services.AddAuthentication().AddFacebook(facebookOptions =>
+            {
+                facebookOptions.AppId = Configuration["Authentication:Facebook:Id"];
+                facebookOptions.AppSecret = Configuration["Authentication:Facebook:Secret"];
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -67,14 +74,13 @@ namespace DevWebsCourseProjectApp
             // for login stuff
             app.UseAuthentication();
 
-            
-
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
             });
+
         }
     }
 }

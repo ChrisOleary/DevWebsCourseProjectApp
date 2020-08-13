@@ -1,0 +1,29 @@
+﻿@model ExternalLoginConfirmationViewModel
+@{
+    ViewData["Title"] = "Register";
+}
+
+<h2 class="ui header"> @ViewData["Title"] </h2>
+<h3 class="ui sub header">Associate you @ViewData["LoginProvider"] account</h3>
+
+<form asp-controller="Home" asp-action="ExternalLoginConfirmation" asp-route-returnurl="@ViewData["ReturnUrl"]" 
+      method="post" class="ui small form validate-me" role="form">
+
+
+    <p class="content">
+        You've successfully authenticated with <strong>@ViewData["LoginProvider"]</strong>.
+        Enter a username for this site and click register to login.
+    </p>
+
+    <div class="six wide field">
+        <div class="ui left icon input">
+            <i class="user icon"></i>
+            <input asp-for="Email" placeholder="Email Address"/>
+            <div asp-validation-for="LoginModel.Email"></div>
+        </div>
+    </div>
+    <br />
+    <input type="submit" class="ui large button blue submit" value="Register"/>
+    <br />
+    <div asp-validation-summary="All" class="ui error message"></div>
+</form>

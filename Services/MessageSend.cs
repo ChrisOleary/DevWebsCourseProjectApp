@@ -36,6 +36,7 @@ namespace DevWebsCourseProjectApp.Services
             return tansportWeb.SendEmailAsync(myMessage);
         }
 
+        // todo - this doesnt work
         public async Task SendSmsAsync(string number, string message)
         {
             //using (var client = new HttpClient { BaseAddress = new System.Uri("https://api.twillio.com") })
